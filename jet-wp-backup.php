@@ -56,8 +56,15 @@ function jet_wp_backup_fun() {
 		function changeJetWpBackupSecret() {
 			document.getElementById('secret_url').innerHTML = '".get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=' + document.getElementById('jet_wp_backup_secret').value;
 			document.getElementById('secret_url').href = '".get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=' + document.getElementById('jet_wp_backup_secret').value;
-			
 		}
+		function deleteBackup(x) {
+			if ( confirm('Are you absolutely sure you want to delete the backup \''+x+'\'?') ) {
+				window.open('".get_site_url()."/wp-content/plugins/".$dn."/delete.php?delete='+x);
+			} else {
+				alert('ok, phew...');
+			}
+		}
+
 		</script>
 	";
 	$backups = scandir("../wp-content/uploads/jet_wp_backup");
@@ -68,7 +75,7 @@ function jet_wp_backup_fun() {
 			$ext = end($ext);
 			$ext = strtolower($ext);
 			if ($ext=="zip") {
-				$backupdivs .= "<div id='backup'><a href='../wp-content/uploads/jet_wp_backup/$backup'>$backup</a></div>";
+				$backupdivs .= "<div id='backup'><a href=\"javascript:deleteBackup('".$backup."');\">[X]</a> <a href='../wp-content/uploads/jet_wp_backup/$backup'>$backup</a></div>";
 			}
 		}
 	}
