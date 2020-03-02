@@ -26,7 +26,7 @@ function jet_wp_backup_fun() {
 	$dn = explode( "/", $dn );
 	$dn = end($dn);
 	$realpath = realpath(dirname(__FILE__));
-	if (!file_exists($realpath."/../../uploads/backups/")) {  mkdir($realpath."/../../uploads/backups/"); }
+	if (!file_exists($realpath."/../../uploads/jet_wp_backup/")) {  mkdir($realpath."/../../uploads/jet_wp_backup/"); }
 	$burl = get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=".$value;
 	
     if (!current_user_can('manage_options')) {
@@ -60,11 +60,16 @@ function jet_wp_backup_fun() {
 		}
 		</script>
 	";
-	$backups = scandir("../wp-content/uploads/backups");
+	$backups = scandir("../wp-content/uploads/jet_wp_backup");
 	$backupdivs = "";
 	foreach($backups as $backup) {
 		if ($backup[0]!=".") {
-			$backupdivs .= "<div id='backup'><a href='../wp-content/uploads/backups/$backup'>$backup</a></div>";
+			$ext = explode(".",$backup);
+			$ext = end($ext);
+			$ext = strtolower($ext);
+			if ($ext=="zip") {
+				$backupdivs .= "<div id='backup'><a href='../wp-content/uploads/jet_wp_backup/$backup'>$backup</a></div>";
+			}
 		}
 	}
 	if ($backupdivs!="") {
