@@ -26,7 +26,7 @@ function jet_wp_backup_fun() {
 	$dn = explode( "/", $dn );
 	$dn = end($dn);
 	$realpath = realpath(dirname(__FILE__));
-	if (!file_exists($realpath."/backups/")) {  mkdir($realpath."/backups/"); }
+	if (!file_exists($realpath."/../../uploads/backups/")) {  mkdir($realpath."/../../uploads/backups/"); }
 	$burl = get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=".$value;
 	
     if (!current_user_can('manage_options')) {
@@ -46,7 +46,7 @@ function jet_wp_backup_fun() {
 			Secret: <a title=\"This value can be shared with a remote script that will ping the site regularly to run the backup, or this page can be visited directly. In either case, visit the URL generated below.\" href=\"javascript:alert('This value can be shared with a remote script that will ping the site regularly to run the backup, or this page can be visited directly. In either case, visit the URL generated below.');\">[?]</a><input name='jet_wp_backup_secret' id='jet_wp_backup_secret' value=\"".$value."\" onkeyup=\"changeJetWpBackupSecret();\" />
 		</p>
 		<p>
-			<a target='_blank' href='".$burl."' id='secret_url'>".$burl."</a>
+			Run a backup now: <a target='_blank' href='".$burl."' id='secret_url'>".$burl."</a>
 		</p>
 		<p>
 			<input type='submit' value='Save' class='button button-primary button-large'>
@@ -60,6 +60,19 @@ function jet_wp_backup_fun() {
 		}
 		</script>
 	";
+	$backups = scandir("../wp-content/uploads/backups");
+	$backupdivs = "";
+	foreach($backups as $backup) {
+		if ($backup[0]!=".") {
+			$backupdivs .= "<div id='backup'><a href='../wp-content/uploads/backups/$backup'>$backup</a></div>";
+		}
+	}
+	if ($backupdivs!="") {
+		print "
+		<h3>Backups</h3>
+		$backupdivs
+		";
+	}
 	
 }
 

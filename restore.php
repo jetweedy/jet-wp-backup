@@ -9,6 +9,12 @@ $SECRET = get_option("jet_wp_backup_secret");
 
 header("Content-type:text/plain");
 
+$dn = dirname(__FILE__);
+$dn = explode( "/", $dn );
+$dn = end($dn);
+$realpath = realpath(dirname(__FILE__));
+if (!file_exists($realpath."/../../uploads/backups/")) {  mkdir($realpath."/../../uploads/backups/"); }
+
 if ($secret==$SECRET) {
 	
 }
