@@ -7,9 +7,7 @@ $SECRET = get_option("jet_wp_backup_secret");
 //print $secret . " | " . $SECRET . "<hr />";
 //print(DB_NAME."|".DB_USER."|".DB_PASSWORD."|".DB_HOST);
 
-
 if (current_user_can('administrator')) {
-
 	$dn = dirname(__FILE__);
 	$dn = explode( "/", $dn );
 	$dn = end($dn);
@@ -23,14 +21,7 @@ if (current_user_can('administrator')) {
 	if (file_exists($delete)) {
 		unlink($delete);
 	}
-	
-	print "
-<script>
-window.opener.location.reload();
-window.close();
-</script>
-	";
-
+//	print "<script>window.opener.location.reload();window.close();</script>";
 } else{
 	print "nope";
 }

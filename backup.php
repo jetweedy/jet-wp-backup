@@ -22,8 +22,23 @@ if ($secret==$SECRET) {
 	$uploadsDir = $realpath."/../../";
 	$uploadsStorage = $realpath."/../../uploads/jet_wp_backup";
 	$bashfile = $uploadsStorage."/".$ts.".sh";
-	
-$c = "
+
+	$phpfile = $realpath."/backup_runner.php";
+	$zipfile = $uploadsStorage."/".$ts.".zip";
+	$x = "
+cd " . $uploadsStorage . ";
+
+php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/
+";
+	file_put_contents($bashfile, $x);
+	print $ts . "\n\n";
+	print $x . "\n\n";
+	$y = "nohup bash " . $bashfile . " >/dev/null 2>&1 &";
+	print $y . "\n\n";
+	exec($y);
+
+/*	
+	$c = "
 cd ".$uploadsDir."
 zip -r ".$uploadsStorage."/".$ts.".zip uploads
 cd ".$uploadsStorage."
@@ -32,16 +47,17 @@ zip -g ".$ts.".zip ".$ts.".sql
 rm -rf ".$ts.".sql
 ";
 
-$x = "nohup bash " . $uploadsStorage . "/" . $ts . ".sh >/dev/null 2>&1 &";
-print $c;
-print "\n\n";
-print $bashfile;
-print "\n\n";
-print $x;
-print "\n\n";
-file_put_contents($bashfile, $c);
-print $ts;
-exec($x);
+	$x = "nohup bash " . $uploadsStorage . "/" . $ts . ".sh >/dev/null 2>&1 &";
+	print $c;
+	print "\n\n";
+	print $bashfile;
+	print "\n\n";
+	print $x;
+	print "\n\n";
+	print $ts;
+	//file_put_contents($bashfile, $c);
+	//exec($x);
+*/
 
 	// Execute the commands and print output
 	//	print shell_exec($c) . "\n----------------------------\n";
