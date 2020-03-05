@@ -26,16 +26,17 @@ function use_admin_jquery() {
 add_action( 'admin_enqueue_scripts', 'use_admin_jquery' );
 */
 
+require_once(__DIR__."/config.php");
 function jet_wp_backup_fun() {
+
+	global $realpath;
+	global $bdir;
+	global $bpath;
+	global $ppath;
 	
-	$dn = dirname(__FILE__);
-	$dn = explode( "/", $dn );
-	$dn = end($dn);
-	$realpath = realpath(dirname(__FILE__));
-	if (!file_exists($realpath."/backups/")) {  
-		mkdir($realpath."/backups/");
+	if (!file_exists($bdir)) {  
+		mkdir($bdir);
 	}
-	$burl = get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=".$value;
 	
     if (!current_user_can('manage_options')) {
         wp_die('Unauthorized user');
@@ -45,8 +46,8 @@ function jet_wp_backup_fun() {
 		update_option('jet_wp_backup_secret', $secret);
     }
     $secret = get_option('jet_wp_backup_secret', '');
-	$burl = get_site_url() ."/wp-content/plugins/".$dn."/backup.php?secret=";
-	$durl = get_site_url() ."/wp-content/plugins/".$dn."/delete.php?delete=";
+	$burl = $ppath."/backup.php?secret=";
+	$durl = $ppath."/delete.php?delete=";
 	print "
 		<h1>JET WP Backup</h1>
 		<form method=\"POST\">
@@ -79,7 +80,7 @@ function jet_wp_backup_fun() {
 			}
 		}
 		function getBackups() {
-			var gburl = \"".get_site_url()."/wp-content/plugins/".$dn."/getbackups.php\";
+			var gburl = \"".$ppath."/getbackups.php\";
 			jQuery.get(gburl, function(x) {
 				jQuery('#jetwpbackupslist').html('');
 				var d = JSON.parse(x);
@@ -89,7 +90,7 @@ function jet_wp_backup_fun() {
 					var a = jQuery('<a>').html('[X]').attr('href','javascript:deleteBackup(\''+d[b]+'\');');
 					div.append(a);
 					div.append(' ');
-					var a = jQuery('<a>').html(d[b]).attr('href','../wp-content/uploads/jet_wp_backup/'+d[b]);
+					var a = jQuery('<a>').html(d[b]).attr('href','".$bpath."/'+d[b]);
 					div.append(a);
 				}
 			});
@@ -108,8 +109,9 @@ function jet_wp_backup_fun() {
 		</script>
 	";
 
-	$bdir = $realpath ."/backups/";
 	$backups = scandir($bdir);
+	sort($backups);
+	$backups = array_reverse($backups);
 	$backupdivs = "";
 	print "
 	<h3>Backups</h3>
@@ -119,12 +121,12 @@ function jet_wp_backup_fun() {
 			$ext = explode(".",$backup);
 			$ext = end($ext);
 			$ext = strtolower($ext);
-			$shversion = $bdir.str_replace(".zip",".sh",$backup);
+			$shversion = $bdir."/".str_replace(".zip",".sh",$backup);
 			if ($ext=="zip") {
 				if (file_exists($shversion)) {
 					unlink($shversion);
 				}
-				$backupdivs .= "<div class='backup'><a href=\"javascript:deleteBackup('".$backup."');\">[X]</a> <a href='../wp-content/plugins/".$dn."/backups/$backup'>$backup</a></div>";
+				$backupdivs .= "<div class='backup'><a href=\"javascript:deleteBackup('".$backup."');\">[X]</a> <a href='".$bpath."/$backup'>$backup</a></div>";
 			}
 		}
 	}

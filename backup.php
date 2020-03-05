@@ -1,7 +1,7 @@
 <?php
 
-$realpath = realpath(dirname(__FILE__));
-require_once($realpath . '/../../../wp-blog-header.php');
+require_once(__DIR__.'/../../../wp-blog-header.php');
+require_once(__DIR__."/config.php");
 $secret = $_GET['secret'];
 $SECRET = get_option("jet_wp_backup_secret");
 //print $secret . " | " . $SECRET . "<hr />";
@@ -13,13 +13,12 @@ header("Content-type:text/plain");
 $dn = dirname(__FILE__);
 $dn = explode( "/", $dn );
 $dn = end($dn);
-$realpath = realpath(dirname(__FILE__));
 
 if ($secret==$SECRET) {
 
 	$ts = date("Y-m-d-h-i-s", time());
 	$uploadsDir = $realpath."/../../";
-	$uploadsStorage = $realpath."/backups";
+	$uploadsStorage = $bdir;
 	$bashfile = $uploadsStorage."/".$ts.".sh";
 
 	$phpfile = $realpath."/backup_runner.php";

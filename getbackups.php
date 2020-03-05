@@ -1,7 +1,7 @@
 <?php
 
-$realpath = realpath(dirname(__FILE__));
-require_once($realpath . '/../../../wp-blog-header.php');
+require_once(__DIR__.'/../../../wp-blog-header.php');
+require_once(__DIR__."/config.php");
 $secret = $_GET['secret'];
 $SECRET = get_option("jet_wp_backup_secret");
 //print $secret . " | " . $SECRET . "<hr />";
@@ -11,7 +11,9 @@ $SECRET = get_option("jet_wp_backup_secret");
 if (current_user_can('administrator')) {
 
 	$files = [];
-	$backups = scandir("./backups");
+	$backups = scandir($bdir);
+	sort($backups);
+	$backups = array_reverse($backups);
 	$backupdivs = "";
 	foreach($backups as $backup) {
 		if ($backup[0]!=".") {
