@@ -11,7 +11,7 @@ $SECRET = get_option("jet_wp_backup_secret");
 if (current_user_can('administrator')) {
 
 	$files = [];
-	$backups = scandir("../../../wp-content/uploads/jet_wp_backup");
+	$backups = scandir("./backups");
 	$backupdivs = "";
 	foreach($backups as $backup) {
 		if ($backup[0]!=".") {

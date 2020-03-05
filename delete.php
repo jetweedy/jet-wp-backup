@@ -16,7 +16,7 @@ if (current_user_can('administrator')) {
 	$delete = str_replace("/", "", $delete);
 	$delete = str_replace("\\", "", $delete);
 	$delete = str_replace("..", "", $delete);
-	$delete = "../../uploads/jet_wp_backup/$delete";
+	$delete = "./backups/$delete";
 	print $delete . "\n\n";
 	if (file_exists($delete)) {
 		unlink($delete);

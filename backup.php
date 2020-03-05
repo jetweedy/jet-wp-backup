@@ -14,27 +14,24 @@ $dn = dirname(__FILE__);
 $dn = explode( "/", $dn );
 $dn = end($dn);
 $realpath = realpath(dirname(__FILE__));
-if (!file_exists($realpath."/../../uploads/jet_wp_backup/")) {  mkdir($realpath."/../../uploads/jet_wp_backup/"); }
 
 if ($secret==$SECRET) {
 
 	$ts = date("Y-m-d-h-i-s", time());
 	$uploadsDir = $realpath."/../../";
-	$uploadsStorage = $realpath."/../../uploads/jet_wp_backup";
+	$uploadsStorage = $realpath."/backups";
 	$bashfile = $uploadsStorage."/".$ts.".sh";
 
 	$phpfile = $realpath."/backup_runner.php";
 	$zipfile = $uploadsStorage."/".$ts.".zip";
 	$x = "
-cd " . $uploadsStorage . ";
-
 php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/
 ";
-	file_put_contents($bashfile, $x);
 	print $ts . "\n\n";
 	print $x . "\n\n";
 	$y = "nohup bash " . $bashfile . " >/dev/null 2>&1 &";
 	print $y . "\n\n";
+	file_put_contents($bashfile, $x);
 	exec($y);
 
 /*	
