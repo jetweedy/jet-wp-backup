@@ -17,6 +17,12 @@ $dn = end($dn);
 if ($secret==$SECRET) {
 
 	$ts = date("Y-m-d-h-i-s", time());
+	$c = "
+cd ".$bdir."
+mysqldump --user=".DB_USER." --password=".DB_PASSWORD." --host=".DB_HOST." ".DB_NAME." > ".$bdir."/".$ts.".sql
+";
+	exec($c);
+
 	$uploadsDir = $realpath."/../../";
 	$uploadsStorage = $bdir;
 	$bashfile = $uploadsStorage."/".$ts.".sh";
@@ -24,14 +30,15 @@ if ($secret==$SECRET) {
 	$phpfile = $realpath."/backup_runner.php";
 	$zipfile = $uploadsStorage."/".$ts.".zip";
 	$x = "
-php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/
+php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/ ".$ts.".sql ".$bdir."/".$ts.".sql
 ";
-	print $ts . "\n\n";
-	print $x . "\n\n";
+//	print $x . "\n\n";
 	$y = "nohup bash " . $bashfile . " >/dev/null 2>&1 &";
-	print $y . "\n\n";
+//	print $y . "\n\n";
+
 	file_put_contents($bashfile, $x);
 	exec($y);
+	print "{\"ts\":\"$ts\"}";
 
 /*	
 	$c = "

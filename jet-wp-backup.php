@@ -98,9 +98,12 @@ function jet_wp_backup_fun() {
 		function runBackup() {
 			var burl = '".$burl."'+document.getElementById('jet_wp_backup_secret').value;
 			console.log(burl);
-			//window.open(burl);
+		//	window.open(burl);
 			jQuery.get(burl, function(x) {
+				console.log(x);
 				jQuery('#jetwpbackupnotification').html('Backup is running... it will appear in the list when it is ready.');
+				var d = JSON.parse(x);
+				console.log(d);
 			});
 		}
 		jQuery(document).ready( function() {
@@ -114,7 +117,12 @@ function jet_wp_backup_fun() {
 	$backups = array_reverse($backups);
 	$backupdivs = "";
 	print "
-	<h3>Backups</h3>
+	<form action=\"".$ppath."/restore.php\" method=\"post\" enctype=\"multipart/form-data\">
+		Restore from Zip file:
+		<input type=\"file\" name=\"restoreFile\" id=\"restoreFile\" />
+		<input type=\"submit\" value=\"Restore\" name=\"submit\" />
+	</form>
+	<h3>Backups</h3><hr />
 	";
 	foreach($backups as $backup) {
 		if ($backup[0]!=".") {
