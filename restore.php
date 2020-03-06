@@ -10,16 +10,27 @@ $SECRET = get_option("jet_wp_backup_secret");
 header("Content-type:text/plain");
 
 if (current_user_can('administrator')) {
-		print_r($_FILES);
+//		print_r($_FILES);
 		if (isset($_FILES['restoreFile'])) {
 			$zname = $_FILES['restoreFile']['name'];
 			$fname = $bdir . "/" . str_replace(".zip", "", $zname);
 			$tname = $_FILES['restoreFile']['tmp_name'];
-			print $zname . " | " . $fname . " | " . $tname . "\n\n";
+//			print $zname . " | " . $fname . " | " . $tname . "\n\n";
 			$zip = new ZipArchive;
 			if ($zip->open($tname) === TRUE) {
 				$zip->extractTo($fname);
 				$zip->close();
+				$ymdhis = date("Ymdhis",time());
+				$c = "
+mysql --user=".DB_USER." --password=".DB_PASSWORD." ".DB_NAME." < ".$fname."/jet-wp-backup.sql
+
+mv " . $fname . "/uploads " . $realpath . "/../../new_uploads
+rm -rf " . $fname . "
+mv " . $realpath . "/../../uploads " . $realpath . "/../../uploads_".$ymdhis."
+mv " . $realpath . "/../../new_uploads " . $realpath . "/../../uploads
+				";
+				print $c;
+				
 			}
 		}
 }

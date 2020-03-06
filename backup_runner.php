@@ -4,8 +4,7 @@ ini_set('max_execution_time', 120); // 120 (seconds) = 2 Minutes
 header("Content-type:text/plain");
 $zipcreated = $argv[1];
 $pathdir = $argv[2];
-$sqlfile = $argv[3];
-$sqlpath = $argv[4];
+$sqlpath = $argv[3];
 if ($pathdir[strlen($pathdir)-1]!="/") { $pathdir .= "/"; }
 print "zipcreated: " . $zipcreated . "\n\n";
 print "pathdir: " . $pathdir . "\n\n";
@@ -13,7 +12,7 @@ print "pathdir: " . $pathdir . "\n\n";
 //// ---------------------------------------------------------------------------
 //// http://lampjs.com/php-create-zip-from-directory-recursively/
 //// ---------------------------------------------------------------------------
-function zipme($source, $sqlfile, $sqlpath, $destination)
+function zipme($source, $sqlpath, $destination)
 {
     if (!file_exists($source)) {
         echo "source doesn't exist";
@@ -49,11 +48,11 @@ function zipme($source, $sqlfile, $sqlpath, $destination)
     } else if (is_file($source) === true) {
         $zip->addFromString(basename($source), file_get_contents($source));
     }
-    $zip->addFromString($sqlfile, file_get_contents($sqlpath));
-//	$zip->addFile($sqlfile);
+    $zip->addFromString("jet-wp-backup.sql", file_get_contents($sqlpath));
+	unlink($sqlpath);
     return $zip->close();
 }
 //// ---------------------------------------------------------------------------
-zipme($pathdir, $sqlfile, $sqlpath, $zipcreated);
+zipme($pathdir, $sqlpath, $zipcreated);
 
 ?>
