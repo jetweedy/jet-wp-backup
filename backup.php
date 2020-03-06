@@ -30,7 +30,7 @@ mysqldump --user=".DB_USER." --password=".DB_PASSWORD." --host=".DB_HOST." ".DB_
 	$phpfile = $realpath."/backup_runner.php";
 	$zipfile = $uploadsStorage."/".$ts.".zip";
 	$x = "
-php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/ ".$ts.".sql ".$bdir."/".$ts.".sql
+php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/ ".$bdir."/".$ts.".sql
 ";
 //	print $x . "\n\n";
 	$y = "nohup bash " . $bashfile . " >/dev/null 2>&1 &";
