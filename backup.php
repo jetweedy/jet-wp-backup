@@ -1,5 +1,4 @@
 <?php
-
 require_once(__DIR__.'/../../../wp-blog-header.php');
 require_once(__DIR__."/config.php");
 $secret = $_GET['secret'];
@@ -7,18 +6,14 @@ $SECRET = get_option("jet_wp_backup_secret");
 //print $secret . " | " . $SECRET . "<hr />";
 //print(DB_NAME."|".DB_USER."|".DB_PASSWORD."|".DB_HOST);
 //phpinfo(); die;
-
 header("Content-type:text/plain");
-
 $dn = dirname(__FILE__);
 $dn = explode( "/", $dn );
 $dn = end($dn);
-
 if ($secret==$SECRET) {
-
 	$ts = date("Y-m-d-h-i-s", time());
-
-	// Generate SQL file
+	//////// Generate SQL file
+	//// Using mysqldump:
 	/*
 	$c = "
 cd ".$bdir."
@@ -26,6 +21,7 @@ mysqldump --user=".DB_USER." --password=".DB_PASSWORD." --host=".DB_HOST." ".DB_
 ";
 	exec($c);
 	*/
+	//// Using PHP:
 	$queries = [];
 	$q = dbQuery("SHOW TABLES");
 	foreach($q['results'] as $r) {
@@ -52,9 +48,8 @@ mysqldump --user=".DB_USER." --password=".DB_PASSWORD." --host=".DB_HOST." ".DB_
 			}
 		}
 	}
-	$sql = implode("\n", $queries);
+	$sql = implode("\n-- [SEPARATOR]\n", $queries);
 	file_put_contents($bdir."/".$ts.".sql", $sql);
-
 	// Zip everything up
 	$uploadsDir = $realpath."/../../";
 	$uploadsStorage = $bdir;
@@ -67,11 +62,9 @@ php " . $phpfile . " " . $zipfile . " ".$uploadsDir."uploads/ ".$bdir."/".$ts.".
 //	print $x . "\n\n";
 	$y = "nohup bash " . $bashfile . " >/dev/null 2>&1 &";
 //	print $y . "\n\n";
-
 	file_put_contents($bashfile, $x);
 	exec($y);
 	print "{\"ts\":\"$ts\"}";
-
 /*	
 	$c = "
 cd ".$uploadsDir."
@@ -93,16 +86,12 @@ rm -rf ".$ts.".sql
 	//file_put_contents($bashfile, $c);
 	//exec($x);
 */
-
 	// Execute the commands and print output
 	//	print shell_exec($c) . "\n----------------------------\n";
-
 	// Execute the commands
 //		exec($c);
-	
 	// Print the commands
 	//print "" . $c . "\n\n";
-
 	// Serve up the ZIP file instead of printing output
 //	$yourfile = $uploadsStorage."/".$ts.".zip";
 //	$file_name = basename($yourfile);

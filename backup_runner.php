@@ -8,10 +8,6 @@ $sqlpath = $argv[3];
 if ($pathdir[strlen($pathdir)-1]!="/") { $pathdir .= "/"; }
 print "zipcreated: " . $zipcreated . "\n\n";
 print "pathdir: " . $pathdir . "\n\n";
-
-//// ---------------------------------------------------------------------------
-//// http://lampjs.com/php-create-zip-from-directory-recursively/
-//// ---------------------------------------------------------------------------
 function zipme($source, $sqlpath, $destination)
 {
     if (!file_exists($source)) {
@@ -23,36 +19,37 @@ function zipme($source, $sqlpath, $destination)
         return false;
     }
     $zip = new ZipArchive();
-    if (!$zip->open($destination, ZIPARCHIVE::CREATE)) {
+    if (!$zip->open($destination, ZIPARCHIVE::CREATE | ZipArchive::OVERWRITE)) {
         echo "failed to create zip file on destination";
         return false;
     }
+    $zip->addFromString("jet-wp-backup.sql", file_get_contents($sqlpath));
     $zip->addEmptyDir(str_replace($source . '/', '', 'uploads/'));
     $source = str_replace("\\", "/", realpath($source));
      if (is_dir($source) === true) {
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-        foreach ($files as $file) {
-            $file = str_replace("\\", "/", $file);
-            // Ignore "." and ".." folders
-			if (str_replace("jet-wp-backup","",strtolower($file))!=strtolower($file))
-				continue;
-            if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source)
+            , RecursiveIteratorIterator::SELF_FIRST
+        //    , RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        foreach ($files as $name => $file) {
+            if (str_replace("jet-wp-backup","",strtolower($name))!=strtolower($name))
                 continue;
-            $file = realpath($file);
-            if (is_dir($file) === true) {
-                $zip->addEmptyDir(str_replace($source . '/', '', 'uploads/' . $file . '/'));
-            } else if (is_file($file) === true) {
-                $zip->addFromString(str_replace($source . '/', '', 'uploads/' . $file), file_get_contents($file));
+            if( in_array($name, array('.', '..')) )
+                continue;
+            // https://stackoverflow.com/questions/4914750/how-to-zip-a-whole-folder-using-php
+            if (!$file->isDir()) {
+                // Get real and relative path for current file
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($source) - 7);
+                // Add current file to archive
+                $zip->addFile($filePath, $relativePath);
             }
         }
     } else if (is_file($source) === true) {
         $zip->addFromString(basename($source), file_get_contents($source));
     }
-    $zip->addFromString("jet-wp-backup.sql", file_get_contents($sqlpath));
 	unlink($sqlpath);
     return $zip->close();
 }
-//// ---------------------------------------------------------------------------
 zipme($pathdir, $sqlpath, $zipcreated);
-
 ?>
